@@ -32,7 +32,7 @@
                     <hr>
                 </div>
                 <div class="p-3">
-                    <form action="{{route ('store')}}" method="POST">
+                    <form action="{{route ('storeapp')}}" method="POST">
                         @csrf
                         <div class="row mb-3">
                             <label class="col-sm-2 col-form-label" for="basic-default-name">Application Name</label>

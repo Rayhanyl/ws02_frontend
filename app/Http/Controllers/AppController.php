@@ -1,12 +1,10 @@
 <?php
 
 namespace App\Http\Controllers;
-use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Validator;
-use Termwind\Components\Raw;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 class AppController extends Controller
 {
@@ -42,6 +40,11 @@ class AppController extends Controller
 
 
             $data = getUrl($this->url .'/applications?'. http_build_query($payloads));
+            if ($data == null){
+            
+                $request->session()->forget('token');
+                return redirect(route('loginpage'));
+            } 
             if($data->pagination->total >= $limit) {
                 if($data->pagination->total % $limit == 0 ){
                     $numberpages = $data->pagination->total / $limit;  
@@ -120,7 +123,7 @@ class AppController extends Controller
     }
 
 
-    public function updateapp(Request $request, $id)
+    public function editapp(Request $request, $id)
     {
 
         $options = getUrl($this->url .'/throttling-policies/application');
@@ -194,113 +197,4 @@ class AppController extends Controller
             dd($e);
         }
     }
-
-
-
-    public function managekeys(Request $request, $id)
-    {
-        $data = getUrl($this->url .'/applications/'. $id);
-        $keymanager = getUrl($this->url .'/key-managers');
-
-        return view('myapplication.managekeys.managekeys', compact('data','keymanager'));
-    }
-
-    public function generateappkey(Request $request)
-    {   
-        $grant = [];
-        foreach($request->granttype as $key=>$item){
-            if($item == 'on'){
-                $grant[] = $key;
-            }
-        }
-        $scope = [];
-        foreach($request->scopetype as $key=>$item){
-            if($item == 'on'){
-                $scope[] = $key;
-            }
-        }
-
-        try {
-            $payloads = [
-                'keyType' => $request->type,
-                'keyManager' => 'Resident Key Manager',
-                'grantTypesToBeSupported' => $grant,
-                'callbackUrl' => 'http://sample.com/callback/url',
-                'scopes' => $scope,
-                'validityTime' => 3600,
-                'additionalProperties' => null,
-            ];
-            
-            $response = Http::withOptions(['verify' => false])
-            ->withHeaders([
-                'Authorization' => 'Bearer '.$request->session()->get('token'),
-            ])
-            ->withBody(json_encode($payloads),'application/json')
-            ->post($this->url.'/applications/'. $request->id.'/generate-keys');
-                
-            $data = json_decode($response->getBody()->getContents());
-
-            if ($response->status() == '409') {
-                return back()->with('warning', 'Already Generated!');
-            }
-            return response()->json($data);
-            
-        } catch (\Exception $e) {
-            dd($e);
-        }
-
-        return $request->all();
-    }
-
-    public function sandboxapi()
-    {
-        return view('myapplication.managekeys.sandbox.apikeys');
-    }
-    public function productionapi()
-    {
-        return view('myapplication.managekeys.production.apikeys');
-    }
-
-
-    public function subscription(Request $request, $id)
-    {
-        $data = getUrl($this->url .'/applications/'. $id);
-        $subs = getUrl($this->url .'/subscriptions?applicationId='. $id);
-
-        return view('myapplication.subscription.subscription', compact('data','subs'));
-    }
-
-    public function addsubs(Request $request, $id)
-    {
-        $data = getUrl($this->url .'/applications/'. $id);
-        $addsubs = getUrl($this->url . '/apis');
-        
-        return view('myapplication.subscription.addsubs', compact('data','addsubs'));
-    }
-
-    public function deletesubs(Request $request, $id)
-    {
-        try {
-
-            $response = Http::withOptions(['verify' => false])
-            ->withHeaders([
-                'Authorization' => 'Bearer '.$request->session()->get('token'),
-            ])
-            ->delete($this->url . '/subscriptions/'. $id);
-    
-            $data =json_decode($response->getBody()->getContents());
-    
-            if($response->status() == 200)
-            {
-                return back()->with('success', 'Successful Delete Subscription!');
-            } 
-            
-            return back()->with('error', 'Failed Delete Subscription');
-        } catch (\Exception $e) {
-            dd($e);
-        }
-    }
-
-
-
 }

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
-use Alert;
 
 
 class AuthController extends Controller
@@ -58,6 +57,8 @@ class AuthController extends Controller
                 if ($response->status() == 200)
                 {
                     $request->session()->put('token', $data->access_token);
+                    $request->session()->put('idtoken', $data->id_token);
+
                     return redirect(route('index'))->with('success', 'Successful User Login!');
                 }
 

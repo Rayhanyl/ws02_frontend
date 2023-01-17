@@ -76,18 +76,23 @@
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
 
-  @include('sweetalert::alert')
   <!-- Vendor JS Files -->
-  @stack('script')
+  <script src="{{asset ('assets/landingpage/js/jquery-3.6.1.js')}}"></script>
+
+  @include('sweetalert::alert')
   <script src="{{asset ('assets/landingpage/vendor/aos/aos.js')}}"></script>
   <script src="{{asset ('assets/landingpage/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
   <script src="{{asset ('assets/landingpage/vendor/glightbox/js/glightbox.min.js')}}"></script>
   <script src="{{asset ('assets/landingpage/vendor/isotope-layout/isotope.pkgd.min.js')}}"></script>
   <script src="{{asset ('assets/landingpage/vendor/swiper/swiper-bundle.min.js')}}"></script>
   <script src="{{asset ('assets/landingpage/vendor/php-email-form/validate.js')}}"></script>
-
+  @stack('script')
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  
+  
   <!-- Template Main JS File -->
   <script src="{{asset ('assets/landingpage/js/main.js')}}"></script>
+  <script src="{{asset ('assets/landingpage/js/datatables.min.js')}}"></script>
 
 </body>
 

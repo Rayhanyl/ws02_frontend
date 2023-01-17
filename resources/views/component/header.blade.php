@@ -22,8 +22,8 @@
   <link href="{{asset ('assets/landingpage/vendor/swiper/swiper-bundle.min.css')}}" rel="stylesheet">
   <link href="{{asset ('assets/landingpage/css/style.css')}}" rel="stylesheet">
   <link href="{{asset ('assets/landingpage/css/custom.css')}}" rel="stylesheet">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href="{{asset ('assets/landingpage/css/datatables.min.css')}}" rel="stylesheet">
+  {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script> --}}
   @stack('style')
 </head>
 

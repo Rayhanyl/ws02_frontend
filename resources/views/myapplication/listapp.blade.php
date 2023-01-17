@@ -51,11 +51,13 @@
                                     style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate3d(-23.2px, 27.2px, 0px);">
                                     <a class="dropdown-item" href="{{route ('subscription',$item->applicationId)}}"><i class="bx bx-smile me-1"></i>
                                         Subscription</a>
+                                    {{-- <a class="dropdown-item" href="{{route ('oauthkeys',$item->applicationId)}}"><i
+                                            class="bx bxs-key me-1"></i> Manage Keys</a> --}}
                                     <a class="dropdown-item" href="{{route ('managekeys',$item->applicationId)}}"><i
                                             class="bx bxs-key me-1"></i> Manage Keys</a>
-                                    <a class="dropdown-item" href="{{route('updateapp',$item->applicationId)}}"><i
+                                    <a class="dropdown-item" href="{{route('editapp',$item->applicationId)}}"><i
                                             class="bx bx-edit-alt me-1"></i> Edit</a>
-                                    <a class="dropdown-item" href="{{route('delete',$item->applicationId)}}"><i
+                                    <a class="dropdown-item btn-deleteapp" href="{{route ('delete',$item->applicationId)}}"><i
                                             class="bx bx-trash me-1"></i> Delete</a>
                                 </div>
                             </div>
@@ -92,4 +94,27 @@
 
     </div>
 </section>
+
 @endsection
+
+@push('script')
+    <script>
+        $(document).on('click', '.btn-deleteapp', function(e){
+            e.preventDefault();
+            let href = $(this).attr('href');
+            Swal.fire({
+                title: 'Are you sure you want to delete this item?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.value) {
+                    window.location.href=href;
+                }
+            })
+        });
+    </script>
+@endpush
