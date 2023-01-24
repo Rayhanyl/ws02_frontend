@@ -2,8 +2,7 @@
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{AppController,AuthController,ManageKeysController,SubscriptionController};
-
+use App\Http\Controllers\{AuthController,AppController,ManageKeysController,SubscriptionController,TryOutController,DocumentController};
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +18,7 @@ Route::get('/', [AppController::class, 'index'])->name('index');
 
 Route::get('/loginpage', [AuthController::class, 'loginpage'])->name('loginpage');
 Route::post('/authentication', [AuthController::class, 'authentication'])->name('authentication');
+Route::post('/swaggerlogin', [AuthController::class, 'swaggerlogin'])->name('swaggerlogin');
 
 Route::get('/registerpage', [AuthController::class, 'registerpage'])->name('registerpage');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
@@ -27,6 +27,9 @@ Route::get('/forgotpassword', [AuthController::class, 'forgetpage'])->name('forg
 
 
 Route::middleware(['haslogin'])->group(function () {
+
+    //Change Password
+    Route::post('/changepassword',[AuthController::class, 'changepassword'])->name('changepass');
 
     // Application
     Route::get('/myapp', [AppController::class, 'myapp'])->name('myapp');
@@ -51,7 +54,6 @@ Route::middleware(['haslogin'])->group(function () {
     Route::post('/updateoauthkey' ,[ManageKeysController::class, 'updateoauth'])->name('updategenerate');
     Route::post('/accesstoken' ,[ManageKeysController::class, 'generateaccesstoken'])->name('accesstoken');
     
-    
     // Subscription
     Route::get('/subscription/{id}', [SubscriptionController::class, 'subscription'])->name('subscription');
     Route::get('/addsubscription/{id}', [SubscriptionController::class, 'addsubs'])->name('addsubscription');
@@ -60,7 +62,16 @@ Route::middleware(['haslogin'])->group(function () {
     Route::post('/updatesubs', [SubscriptionController::class, 'update'])->name('updatesubs');
     Route::get('/deletesubs/{id}', [SubscriptionController::class, 'deletesubs'])->name('deletesubs');
 
+    // Tryout
+    Route::get('/tryout/{id}',[TryOutController::class, 'vtryout'])->name('tryout');
+    Route::post('/generatetestkeyoauth' ,[TryOutController::class, 'generatetestkeyoauth'])->name('generatetestkeyoauth');
+    Route::post('/generatetestkeyapikey' ,[TryOutController::class, 'generatetestkeyapikey'])->name('generatetestkeyapikey');
+
     
+    // Documentation
+    Route::get('/documentation',[DocumentController::class, 'vdocumentation'])->name('vdocumentation');
+    
+    // Log out
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');    
 });
 

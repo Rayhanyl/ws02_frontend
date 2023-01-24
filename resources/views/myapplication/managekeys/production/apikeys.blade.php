@@ -35,22 +35,20 @@
                       <button class="nav-link active" id="pills-none-tab" data-bs-toggle="pill" data-bs-target="#pills-none" type="button" role="tab" aria-controls="pills-none" aria-selected="true">None</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                      <button class="nav-link" id="pills-http-tab" data-bs-toggle="pill" data-bs-target="#pills-http" type="button" role="tab" aria-controls="pills-http" aria-selected="false">IP Addresses</button>
-                    </li>
+                        <button class="nav-link" id="pills-apiaddress-tab" data-bs-toggle="pill" data-bs-target="#pills-apiaddress" type="button" role="tab" aria-controls="pills-apiaddress" aria-selected="false">IP Addresses</button>
+                      </li>
                     <li class="nav-item" role="presentation">
-                      <button class="nav-link" id="pills-apiaddress-tab" data-bs-toggle="pill" data-bs-target="#pills-apiaddress" type="button" role="tab" aria-controls="pills-apiaddress" aria-selected="false">HTTP Referrers (Web Sites)</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="pills-http-tab" data-bs-toggle="pill" data-bs-target="#pills-http" type="button" role="tab" aria-controls="pills-http" aria-selected="false">HTTP Referrers (Web Sites)</button>
                     </li>
                   </ul>
                   <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-none" role="tabpanel" aria-labelledby="pills-none-tab" tabindex="0">
                         @include('myapplication.managekeys.production.apikeys.none')
                     </div>
-                    <div class="tab-pane fade" id="pills-http" role="tabpanel" aria-labelledby="pills-http-tab" tabindex="0">
+                    <div class="tab-pane fade" id="pills-apiaddress" role="tabpanel" aria-labelledby="pills-apiaddress-tab" tabindex="0">
                         @include('myapplication.managekeys.production.apikeys.apiaddress')
                     </div>
-                    <div class="tab-pane fade" id="pills-apiaddress" role="tabpanel" aria-labelledby="pills-apiaddress-tab" tabindex="0">
+                    <div class="tab-pane fade" id="pills-http" role="tabpanel" aria-labelledby="pills-http-tab" tabindex="0">
                         @include('myapplication.managekeys.production.apikeys.http')
                     </div>
                   </div>
@@ -92,9 +90,14 @@
             <div class="result-apikeys">
                 <p>Please Copy the API Key
                     If the token type is JWT or API Key, please copy this generated token value as it will be displayed only for the current browser session. ( The token will not be visible in the UI after the page is refreshed. )</p>
-                    <label for="text-apikeys"></label>
-                    <textarea name="token" id="text-apikeys" cols="30" rows="10" disabled>
-                    </textarea>
+                    <div>
+                        <label for="text-apikey"></label>
+                        <textarea name="token" id="text-apikey" cols="70" rows="10" disabled>
+                        </textarea>
+                    </div>
+                    <div>
+                        <small>Above token has a validity period of seconds.</small>
+                    </div>
                     <button class="btn btn-success" onclick="myFunction()">Copy To clipboard</button>
             </div>
         </div>
@@ -113,11 +116,27 @@
 @push('script')
     <script>
          
+        $('#pills-none-tab').on('click',function(){
+            reset();
+        }); 
+        $('#pills-apiaddress-tab').on('click',function(){
+            reset();
+        }); 
+        $('#pills-http-tab').on('click',function(){
+            reset();
+        });
+
+        function reset(){
+            $('.boxaddress').html('');
+            $('#addip').val('');
+            $('.boxhttp').html('');
+            $('#addhttp').val('');
+        }
 
         // API ADDRESS
         $('.addip').on('click',function(){
-            let valhttp = $('.textaddress').val();
-            $('.boxaddress').append(`<div class="col-3 deletboxipaddress"><p class="fw-bold permitip" >${valhttp}</p> <button class="btn btn-danger btn-sm deleteaddress"><i class="bi bi-trash2-fill"></i></button></div>`);
+            let valip = $('.textaddress').val();
+            $('.boxaddress').append(`<div class="col-3 deletboxipaddress"><p class="fw-bold permitip">${valip}</p> <button class="btn btn-danger btn-sm deleteaddress"><i class="bi bi-trash2-fill"></i></button></div>`);
             $('.textaddress').val('');
         });
         
@@ -125,7 +144,7 @@
             $(this).parents('.deletboxipaddress').remove();
         });
 
-
+        // Array to string IPADDRESS
         function arraytostringip(ipaddresses){
             let ipaddress = '';
             ipaddresses.forEach((element,i) => {
@@ -141,13 +160,26 @@
         // HTTP REFERER
         $('.addhttp').on('click',function(){
             let valhttp = $('.texthttp').val();
-            $('.boxhttp').append(`<div class="col-3 deletboxhttp"><p class="fw-bold">${valhttp} <button class="btn btn-danger btn-sm deletehttp"><i class="bi bi-trash2-fill"></i></button></p></div>`);
+            $('.boxhttp').append(`<div class="col-3 deletboxhttp"><p class="fw-bold permithttp">${valhttp}</p> <button class="btn btn-danger btn-sm deletehttp"><i class="bi bi-trash2-fill"></i></button></div>`);
             $('.texthttp').val('');
         });
 
         $(document).on('click','.deletehttp', function(){
             $(this).parents('.deletboxhttp').remove();
         });
+
+        // Array to string HTTP REFERRER
+        function arraytostringhttp(httpreferrers){
+            let httpreferer = '';
+            httpreferrers.forEach((element,i) => {
+                if(i > 0 ){
+                    httpreferer += ',' + element;
+                }else{
+                    httpreferer = element;
+                }
+            });
+            return httpreferer;
+        }
 
         // GENERATE APIKEY
         $("#infinitevalidity").change(function() {
@@ -170,13 +202,23 @@
         });
 
         $(document).on('submit','#form-apikeys', function(e){
+            let httpreferrers = [];
             let ipaddresses = [];
+
             $('.permitip').each(function(i, obj) {
                 ipaddresses.push($(this).html());
             });
+            $('.permithttp').each(function(i, obj) {
+                httpreferrers.push($(this).html());
+            });
+            
             let arripaddress = arraytostringip(ipaddresses);
+            let arrhttpreferers = arraytostringhttp(httpreferrers);
             let formdata = new FormData(this);
+            
             formdata.append('ipaddresses',arripaddress);
+            formdata.append('httpreferrers',arrhttpreferers);
+
             e.preventDefault();
             $.ajax({
                 url: $(this).attr('action'),
@@ -191,16 +233,19 @@
                 success: function(data) {
                     $('.before-apikeys').hide();
                     $('.result-apikeys').show();
-                    $('#text-apikeys').val(data.data.apikeys);
+                    $('#text-apikey').val(data.data.apikey);
+                    $('#text-valitytime').val(data.data.validityTime);
                     $('.btn-apikeys').hide();
                     $('.btn-apikeys').html(`<i class='bx bx-cog bx-rotate-180'></i> Generate`).attr('disabled', false);
                 }
             });
         });
 
+
+        // Copy text APIKEY
         function myFunction() {
             // Get the text field
-            var copyText = document.getElementById("text-apikeys");
+            var copyText = document.getElementById("text-apikey");
 
             // Select the text field
             copyText.select();
@@ -208,11 +253,11 @@
 
             // Copy the text inside the text field
             navigator.clipboard.writeText(copyText.value);
-            if(copyText.value.length > 10) copyText.value = copyText.value.substring(0,20);
+            // if(copyText.value.length > 10) copyText.value = copyText.value.substring(0,20);
 
             Swal.fire(
             'Already Copied',
-            copyText.value+'....',
+            '',
             'success'
             )
         }

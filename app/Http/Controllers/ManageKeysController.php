@@ -49,9 +49,15 @@ class ManageKeysController extends Controller
             $request->session()->forget('token');
             return redirect(route('loginpage'));
         } 
+
         $alldata = getUrl($this->url .'/applications/'.$id.'/oauth-keys');
         $data = collect($alldata->list)->where('keyType', 'PRODUCTION')->first();
-        $base64 = base64_encode($data->consumerKey.$data->consumerSecret);
+        
+        if ($data != null) {
+            $base64 = base64_encode($data->consumerKey.$data->consumerSecret);
+        }
+        $base64 = '';
+
         $grant = getUrl($this->url .'/settings');
         $granttype = [
             "refresh_token" => 'Refresh Token',
@@ -85,15 +91,20 @@ class ManageKeysController extends Controller
 
         $url = $this->getUrlToken();
         $app = getUrl($this->url .'/applications/'. $id);
+        
         if ($app == null){
             
             $request->session()->forget('token');
             return redirect(route('loginpage'));
-        } 
-        $alldata = getUrl($this->url .'/applications/'.$id.'/oauth-keys');
+        }
 
+        $alldata = getUrl($this->url .'/applications/'.$id.'/oauth-keys');
         $data = collect($alldata->list)->where('keyType', 'SANDBOX')->first();
-        $base64 = base64_encode($data->consumerKey.$data->consumerSecret);
+        if ($data != null) {
+            $base64 = base64_encode($data->consumerKey.$data->consumerSecret);
+        }
+        $base64 = '';
+
         $grant = getUrl($this->url .'/settings');
         $granttype = [
             "refresh_token" => 'Refresh Token',
@@ -225,7 +236,6 @@ class ManageKeysController extends Controller
                 'revokeToken' => '',
             ];
             
-
             $response = Http::withOptions(['verify' => false])
             ->withHeaders([
                 'Authorization' => 'Bearer '.$request->session()->get('token'),
@@ -259,8 +269,9 @@ class ManageKeysController extends Controller
                 $period = $request->validityPeriod;
             }
     
-            $additional = [ 'permittedIP' => $request->ipaddresses,
-                "permittedReferer"=> "" 
+            $additional = [ 
+                'permittedIP' => $request->ipaddresses,
+                'permittedReferer'=> $request->httpreferrers 
             ];
     
             $additional = (object) $additional;
@@ -269,7 +280,7 @@ class ManageKeysController extends Controller
                 'validityPeriod' => $period,
                 'additionalProperties' => $additional,
             ];
-    
+
             $response = Http::withOptions(['verify' => false])
             ->withHeaders([
                 'Authorization' => 'Bearer '.$request->session()->get('token'),

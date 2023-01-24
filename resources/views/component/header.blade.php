@@ -24,6 +24,7 @@
   <link href="{{asset ('assets/landingpage/css/custom.css')}}" rel="stylesheet">
   <link href="{{asset ('assets/landingpage/css/datatables.min.css')}}" rel="stylesheet">
   {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script> --}}
+  <link href="{{asset ('swagger/style.css')}}" rel="stylesheet">
   @stack('style')
 </head>
 
@@ -41,13 +42,11 @@
             <li><a class="nav-link {{Request::url() == route('index') ? 'active' : ''}}" href="{{route('index')}}">Home</a></li>
           @if (getToken())
             <li><a class="nav-link {{ ( Request::url() == route('myapp') ) ||  ( Request::url() == route('listapp') ) ? 'active' : ''}}" href="{{route('myapp')}}">My Application</a></li>
-            <li><a class="nav-link" href="#">Documentation</a></li>
+            <li><a class="nav-link {{Request::url() == route('vdocumentation') ? 'active' : ''}}" href="{{ route ('vdocumentation') }}">Documentation</a></li>
+            <li><a class="nav-link" type="button" data-bs-toggle="modal" data-bs-target="#changemodal">Change Password</a></li>
             <li><a class="nav-link" href="{{route('logout')}}">Logout</a></li>
           @else
             <li><a class="nav-link" href="{{route('loginpage')}}">Login</a></li>
-            {{-- <li><a class="nav-link " href="#about">About</a></li> --}}
-            {{-- <li><a class="nav-link " href="#team">Team</a></li> --}}
-            {{-- <li><a class="nav-link  " href="#portfolio">Portfolio</a></li> --}}
           @endif
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
@@ -65,3 +64,5 @@
 
     </div>
   </header>
+
+  @include('auth.changepass')

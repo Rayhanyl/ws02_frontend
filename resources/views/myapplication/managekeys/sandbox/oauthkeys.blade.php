@@ -325,11 +325,11 @@
 
             // Copy the text inside the text field
             navigator.clipboard.writeText(copyText.value);
-            if(copyText.value.length > 10) copyText.value = copyText.value.substring(0,20);
+            // if(copyText.value.length > 10) copyText.value = copyText.value.substring(0,20);
 
             Swal.fire(
             'Already Copied',
-            copyText.value+'....',
+            '',
             'success'
             )
         }

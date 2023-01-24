@@ -51,8 +51,6 @@
                                     style="position: absolute; inset: 0px auto auto 0px; margin: 0px; transform: translate3d(-23.2px, 27.2px, 0px);">
                                     <a class="dropdown-item" href="{{route ('subscription',$item->applicationId)}}"><i class="bx bx-smile me-1"></i>
                                         Subscription</a>
-                                    {{-- <a class="dropdown-item" href="{{route ('oauthkeys',$item->applicationId)}}"><i
-                                            class="bx bxs-key me-1"></i> Manage Keys</a> --}}
                                     <a class="dropdown-item" href="{{route ('managekeys',$item->applicationId)}}"><i
                                             class="bx bxs-key me-1"></i> Manage Keys</a>
                                     <a class="dropdown-item" href="{{route('editapp',$item->applicationId)}}"><i
@@ -71,7 +69,9 @@
                         <h5 class="card-title">{{$item->name}}</h5>
                         <p class="card-text mb-4 text-break fw-light">{{$item->description}}</p>
                         <p class="fw-light">{{$item->throttlingPolicy}}</p>
-                        <p class="fs-6">Subscription: {{$item->subscriptionCount}} AP(s)-</small>TryOut</p>
+                        <p class="fs-6">Subscription: {{$item->subscriptionCount}} AP(s)-</small>
+                            <a href="{{ route ('tryout',$item->applicationId) }}">TryOut</a>   
+                        </p>
                     </div>
                 </div>
             </div>

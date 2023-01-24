@@ -9,10 +9,10 @@
                 <form action="#">
                     <div class="row g-3"> 
                         <div class="col-10">
-                        <input type="text" class="form-control textaddress" id="addip" placeholder="IP ADDRESS">
+                        <input type="text" class="form-control texthttp" id="addhttp" placeholder="Enter Http Referer">
                         </div>
                         <div class="col-2">
-                        <button type="submit" class="btn btn-success mb-3 addip"><i class="bi bi-plus"></i></button>
+                        <button type="submit" class="btn btn-success mb-3 addhttp"><i class="bi bi-plus"></i></button>
                         </div>
                     </div>
                     <div class="d-grid gap-2 mb-3">
@@ -25,17 +25,18 @@
                 </form>
             </div>
             <div class="col-6 shadow p-4 rounded">
-                <h4>Examples of IP Addresses allowed</h4>
-                <p class="fw-light">Specify one IPv4 or IPv6 or a subnet using CIDR notation</p>
-                <p class="fw-light">Examples: 192.168.1.2, 152.12.0.0/13, 2002:eb8::2 or 1001:ab8::/44</p>
+                <h4>Examples of URLs allowed to restrict websites</h4>
+                <p class="fw-light">A specific URL with an exact path: <b> www.example.com/path</b></p>
+                <p class="fw-light">Any URL in a single subdomain, using a wildcard asterisk (*):</p>
+                <p class="fw-bold">sub.example.com/*</p>
+                <p class="fw-light">Any subdomain or path URLs in a single domain, using wildcard asterisks (*):</p>
+                <p class="fw-bold">*.example.com/*</p>
             </div>
             <div class="col-12 mt-3">
                 <hr>
-                <div class="row p-3 boxaddress">
+                <div class="row p-3 boxhttp">
                 </div>
             </div>
         </div>
     </div>
 </div>
-
-

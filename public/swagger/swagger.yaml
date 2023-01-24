@@ -1,0 +1,29 @@
+swagger: "2.0"
+paths:
+  /swaggerlogin:
+    post:
+      tags:
+        - Login
+      summary: Login
+      description: "Login with this API"
+      operationId: login
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: query
+          name: username
+          type: string
+          required: true
+        - in: query
+          name: password
+          type: string
+          required: true
+      responses:
+        "200":
+          description: successful operation
+        "400":
+          description: Bad request
+      security:
+        - api_key: []

@@ -80,6 +80,14 @@
   <script src="{{asset ('assets/landingpage/js/jquery-3.6.1.js')}}"></script>
 
   @include('sweetalert::alert')
+  <script src="{{asset('swagger/jquery-2.1.4.min.js')}}"></script>
+  <script src="{{asset('swagger/swagger-bundle.js')}}"></script>
+  <script type="application/javascript">
+      const ui = SwaggerUIBundle({
+          url: "{{ asset('swagger/swagger.yaml') }}",
+          dom_id: '#swagger-ui',
+      });
+  </script>
   <script src="{{asset ('assets/landingpage/vendor/aos/aos.js')}}"></script>
   <script src="{{asset ('assets/landingpage/vendor/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
   <script src="{{asset ('assets/landingpage/vendor/glightbox/js/glightbox.min.js')}}"></script>

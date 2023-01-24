@@ -146,6 +146,44 @@ class AuthController extends Controller
         }
     }
 
+    public function changepassword(Request $request)
+    {
+        try {
+
+            $payloads = [
+                'currentPassword' => $request->currentpassword,
+                'newPassword' => $request->newpassword
+            ];
+
+            $response = Http::withOptions(['verify' => false])
+            ->withHeaders([
+                'Authorization' => 'Bearer '.$request->session()->get('token'),
+            ])
+            ->withBody(json_encode($payloads),'application/json')
+            ->post($this->url. '/me/change-password');
+
+            $data =json_decode($response->getBody()->getContents());
+            
+            if ($response->status() == '401') {
+                $request->session()->forget('token');
+                return redirect(route('loginpage'));
+            }
+            if ($response->status() == '400') {
+                if ($data->code == '901451') {
+                    return back()->with('warning', 'Current password incorrect');
+                }
+            }
+            if ($response->status() == ('200')) {
+                return redirect(route('index'))->with('success', 'Successful Change Password!');
+            }
+            return back()->with('warning', 'Somthing Wrong With Data!');
+
+            return redirect(route('index'))->with('success', 'Successful Change Password!');
+        } catch (\Exception $e) {
+            dd($e);
+        }
+    }
+
     public function forgetpage()
     {
         return view('auth.forgotpass');
@@ -155,5 +193,50 @@ class AuthController extends Controller
     {
         $request->session()->forget('token');
         return redirect(route('loginpage'));
+    }
+
+    public function swaggerlogin (Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+
+            'username'              => 'required',
+            'password'              => 'required',
+
+        ],[
+            'username' => 'Username form cannot be empty',
+            'password' => 'The password form cannot be empty',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }else{
+
+                $payloads = [
+                    'grant_type' => 'password',
+                    'username' => $request->username,
+                    'password' => $request->password,
+                    'scope' => 'apim:admin apim:api_key apim:app_import_export apim:app_manage apim:store_settings apim:sub_alert_manage apim:sub_manage apim:subscribe openid apim:subscribe'
+                ];
+
+                $response = Http::withOptions(['verify' => false])
+                ->withHeaders([
+                    'Authorization' => 'Basic ckJpNTJRa1QyT0dTUjk5a0R6TTVPMGtRT253YToxdXY5UmI4UjBRZWZLaEVkSExDaDBNbUZUamNh',
+                ])
+                ->withBody(json_encode($payloads),'application/json')
+                ->post($this->url_login. '/oauth2/token');
+
+                $data = json_decode($response->getBody()->getContents());
+
+                if ($response->status() == 200)
+                {
+                    $request->session()->put('token', $data->access_token);
+                    $request->session()->put('idtoken', $data->id_token);
+
+                    return response()->json(['status' => 'success', 'data' => $data]);
+                }
+
+                return redirect()->back()->with('warning', 'Wrong Username or Password');
+        }
+
     }
 }
