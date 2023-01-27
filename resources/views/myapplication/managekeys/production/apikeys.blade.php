@@ -125,10 +125,13 @@
         $('#pills-http-tab').on('click',function(){
             reset();
         });
-
+        $('#infinitevalidity').on('click',function(){
+            reset();
+        });
         function reset(){
             $('.boxaddress').html('');
             $('#addip').val('');
+            $('#validityPeriod').val('');
             $('.boxhttp').html('');
             $('#addhttp').val('');
         }

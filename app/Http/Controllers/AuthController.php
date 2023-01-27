@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\ConfirmPasswordRequest;
 
 
 class AuthController extends Controller
@@ -67,7 +68,7 @@ class AuthController extends Controller
 
     }
     
-    public function registerpage ()
+    public function registerpage()
     {
         return view('auth.register');
     }
@@ -78,9 +79,9 @@ class AuthController extends Controller
 
             'firstname'             => 'required',
             'lastname'              => 'required',
-            'userlogin'             => 'required',
+            'userlogin'             => 'required|min:6',
             'phone'                 => 'required|numeric',
-            'email'                 => 'required|email',
+            'email'                 => 'required|email:rfc,dns',
             'password'              => 'required|confirmed|min:6',
             'password_confirmation' => 'required|min:6',
 
@@ -132,9 +133,13 @@ class AuthController extends Controller
                 ->withBody(json_encode($payloads),'application/json')
                 ->post($this->url_regis. '/identity/user/v1.0/me');
 
-                $data = $response->getBody()->getContents();
-                
-                return redirect(route('loginpage'))->with('success', 'Successful User Registration!');
+                $data = json_decode($response->getBody()->getContents());
+
+                if ($response->status() == '409') {
+                    return back()->with('warning', $data->description);
+                } else {
+                    return redirect(route('loginpage'))->with('success', 'Successful User Registration!');
+                }
 
             } catch (\Exception $e) {
                 dd($e);
@@ -184,59 +189,94 @@ class AuthController extends Controller
         }
     }
 
-    public function forgetpage()
-    {
-        return view('auth.forgotpass');
-    }
-
     public function logout(Request $request)
     {
         $request->session()->forget('token');
         return redirect(route('loginpage'));
     }
 
-    public function swaggerlogin (Request $request)
+    // Forgot Password
+    public function forgetpage()
     {
-        $validator = Validator::make($request->all(), [
+        return view('auth.forgotpassword.forgotpass');
+    }
 
-            'username'              => 'required',
-            'password'              => 'required',
+    // public function forgotpassword(Request $request)
+    // {        
+    //     try {
+            
+    //         $response = Http::withOptions(['verify' => false])
+    //         ->asForm()->post('https://194.233.88.81:9443/accountrecoveryendpoint/verify.do', [
+    //             'usernameUserInput' => $request->username,
+    //             'username' => $request->username,
+    //             'tenantDomain' => 'carbon.super',
+    //             'isSaaSApp' => 'true',
+    //             'recoveryOption' => 'EMAIL',
+    //             'callback' => 'https://194.233.88.81:9443/authenticationendpoint/login.do?authenticators=BasicAuthenticator:LOCAL&response_type=code&type=oidc&tenantDomain=carbon.super&client_id=&relyingParty=&passiveAuth=false&isSaaSApp=true&commonAuthCallerPath=/oauth2/authorize&scope=apim:admin+apim:api_key+apim:app_import_export+apim:app_manage+apim:store_settings+apim:sub_alert_manage+apim:sub_manage+apim:subscribe+openid&forceAuth=false&sessionDataKey=&redirect_uri=https://194.233.88.81:9443/devportal/services/auth/callback/login&state=/apis&sp=apim_devportal',
+    //         ]);
 
-        ],[
-            'username' => 'Username form cannot be empty',
-            'password' => 'The password form cannot be empty',
-        ]);
+    //         $data = $response->getBody()->getContents();
+    //         if ($response->status() == '200') {
+    //             return redirect(route('loginpage'))->with('success', 'Cek your email for reset password');
+    //         }
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }else{
+    //         return back()->with('warning', 'Failed!');
 
-                $payloads = [
-                    'grant_type' => 'password',
-                    'username' => $request->username,
-                    'password' => $request->password,
-                    'scope' => 'apim:admin apim:api_key apim:app_import_export apim:app_manage apim:store_settings apim:sub_alert_manage apim:sub_manage apim:subscribe openid apim:subscribe'
-                ];
+    //     } catch (\Exception $e) {
+    //         dd($e);
+    //     }
+    // }
 
-                $response = Http::withOptions(['verify' => false])
-                ->withHeaders([
-                    'Authorization' => 'Basic ckJpNTJRa1QyT0dTUjk5a0R6TTVPMGtRT253YToxdXY5UmI4UjBRZWZLaEVkSExDaDBNbUZUamNh',
-                ])
-                ->withBody(json_encode($payloads),'application/json')
-                ->post($this->url_login. '/oauth2/token');
+    public function vnewpassword(Request $request)
+    {
+        $payloads = [
+            'code' => $request->confirmation,
+            'step' => '',
+            'properties' => [],
+        ];
 
-                $data = json_decode($response->getBody()->getContents());
+        $response = Http::withOptions(['verify' => false])
+        ->withBasicAuth('admin', 'admin')
+        ->withHeaders([
+            'Authorization' => 'Basic YWRtaW46YWRtaW4=',
+            'Accept' => '*/*',
+        ])
+        ->withBody(json_encode($payloads),'application/json')
+        ->post('https://194.233.88.81:9443/t/carbon.super/api/identity/recovery/v0.9/validate-code');
+        $data = json_decode($response->getBody()->getContents());
+        $status = $response->status();
+        $confirmation = $request->confirmation;
+        if ($response->status() == '400') {
+            $invalid = $data->description;
+            return view('auth.forgotpassword.newpassword',compact('status','data','confirmation','invalid'));
+        } else {
+            return view('auth.forgotpassword.newpassword',compact('status','data','confirmation'));
+        }
+    }
 
-                if ($response->status() == 200)
-                {
-                    $request->session()->put('token', $data->access_token);
-                    $request->session()->put('idtoken', $data->id_token);
 
-                    return response()->json(['status' => 'success', 'data' => $data]);
-                }
+    public function updatenewpassword(Request $request)
+    {
+        $payloads = [
+            'key' => $request->confirmation,
+            'password' => $request->password,
+            'properties' => [],
+        ];
 
-                return redirect()->back()->with('warning', 'Wrong Username or Password');
+        $response = Http::withOptions(['verify' => false])
+        ->withBasicAuth('admin', 'admin')
+        ->withHeaders([
+            'Authorization' => 'Basic YWRtaW46YWRtaW4=',
+            'Accept' => '*/*',
+        ])
+        ->withBody(json_encode($payloads),'application/json')
+        ->post('https://194.233.88.81:9443/t/carbon.super/api/identity/recovery/v0.9/set-password');
+        $data = json_decode($response->getBody()->getContents());
+    
+        if ($response->status() == '200') {
+            return redirect(route ('loginpage'))->with('success', 'Bershasil mereset password');
         }
 
+        return back()->with('warning', $data->description);
     }
 }

@@ -55,8 +55,9 @@ class ManageKeysController extends Controller
         
         if ($data != null) {
             $base64 = base64_encode($data->consumerKey.$data->consumerSecret);
+        }else{
+            $base64 = '';
         }
-        $base64 = '';
 
         $grant = getUrl($this->url .'/settings');
         $granttype = [
@@ -91,7 +92,6 @@ class ManageKeysController extends Controller
 
         $url = $this->getUrlToken();
         $app = getUrl($this->url .'/applications/'. $id);
-        
         if ($app == null){
             
             $request->session()->forget('token');
@@ -100,10 +100,12 @@ class ManageKeysController extends Controller
 
         $alldata = getUrl($this->url .'/applications/'.$id.'/oauth-keys');
         $data = collect($alldata->list)->where('keyType', 'SANDBOX')->first();
+        
         if ($data != null) {
             $base64 = base64_encode($data->consumerKey.$data->consumerSecret);
+        }else{
+            $base64 = '';
         }
-        $base64 = '';
 
         $grant = getUrl($this->url .'/settings');
         $granttype = [

@@ -71,10 +71,13 @@
                                 <p>ID user</p>
                             </div>
                         </div>
-                        <p class="fw-bold">cURL:</p>
-                        <p class="text-break">
+                        <p class="fw-bold">cURL: </p>
+                        <p class="text-break" id="text-curl">
                             curl -L -X POST 'http://dev-aas.asabri.co.id/pensiun' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlUyRnNkR1ZrWDE4WDlJemJOcTlQWlNKWHRXemFpV2o4ODdNMkdQNFNqdHM9IiwicGFzc3dvcmQiOiJVMkZzZEdWa1gxL3ltRWxtTmFwMHdIdHVlQlpWMy9JN05OSXdSUXRtSEVjPSIsImlhdCI6MTY1ODIyOTk1MSwiZXhwIjoxNjYwODIxOTUxfQ.6_UXZCmofvHuUOkHuamHa4HbQx_GGnJjOE9ytTBTJHA' -H 'Content-Type: application/x-www-form-urlencoded' --data-urlencode 'pen_nomor=ED371647111195
                         </p>
+                        <div class="col-2 my-2 d-grid gap-2">
+                            <button class="btn btn-primary btn-sm" onclick="myCopyCurl()"><i class="bi bi-clipboard"></i> Copy cURL</button>
+                        </div>
                         <p class="fw-bold">Response:</p>
                         <div class="row text-center">
                             <hr>
@@ -143,5 +146,21 @@
         </div>
     </div>
 </section>
-
+    @push('script')
+        <script>
+            let text = document.getElementById('text-curl').innerHTML;
+            const myCopyCurl = async () => {
+                try {
+                await navigator.clipboard.writeText(text);
+                    Swal.fire(
+                        'Already Copied',
+                        '',
+                        'success'
+                    )
+                } catch (err) {
+                console.error('Failed to copy: ', err);
+                }
+            }
+        </script>
+    @endpush
 @endsection  

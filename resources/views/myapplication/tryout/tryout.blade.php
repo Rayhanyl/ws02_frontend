@@ -3,195 +3,89 @@
 @section('content')
 
 <section id="breadcrumbs" class="breadcrumbs">
-    <div class="container">
-        <ol>
-            <li><a href="{{route('index')}}">Home</a></li>
-            <li>My Application</li>
-        </ol>
-        <h2>Try Out Api</h2>
-    </div>
+  <div class="container">
+      <ol>
+          <li><a href="{{route('index')}}">oauth</a></li>
+          <li>My Application</li>
+      </ol>
+      <h2>Try Out API</h2>
+  </div>
 </section>
 
 <section class="inner-page">
-        <div class="container">
-            <div class="row">
-                <div class="col-12 col-md-4 p-2">
-                    <div class="bg-light p-3 rounded shadow">
-                        <div class="p-3 d-flex justify-content-center">
-                            <img src="{{asset ('assets/landingpage/img/app.png')}}" class="card-img-top w-50 mx-auto"
-                            alt="Card Image">
-                        </div>
-                        <div class="mt-4">
-                            <p class="fw-bold">{{ $app->name }}</p>
-                            <p class="fw-bold text-capitalize">{{ $app->owner }}</p>
-                            <p class="fw-bold">Subscription: {{ $app->subscriptionCount }}</p>
-                        </div>
-                    </div>
+  <div class="container">
+  <div class="col-12 col-lg-3">
+      <div class="mb-5">
+          <a class="btn btn-primary" href="{{route('listapp')}}"><i class='bx bx-chevrons-left'></i> List
+              Application</a>
+      </div>
+  </div>
+    <div class="glass card">
+      <div class="card-body row g-4">
+        <div class="col-12 col-md-4" data-aos="zoom-in-right">
+          <div class="card rounded-5">
+            <div class="card-body row">
+                <div class="col-12 p-3 d-flex justify-content-center">
+                  <img src="{{asset ('assets/landingpage/img/app.png')}}" class="card-img-top w-25 mx-auto"
+                  alt="Card Image">
                 </div>
-                <div class="col-12 col-md-8">
-                    <div class="row g-3">
-                        <div class="col-12 mb-2">
-                            <h4>Security</h4>
-                            <hr>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="RadioTryOut" id="oauth" value="1" checked>
-                                <label class="form-check-label fw-bold" for="oauth">
-                                  Oauth
-                                </label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="RadioTryOut" id="apikey" value="2">
-                                <label class="form-check-label fw-bold" for="apikey">
-                                  API Key
-                                </label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="RadioTryOut" id="basic" value="3">
-                                <label class="form-check-label fw-bold" for="basic">
-                                  Basic
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                          <div for="Oauth" class="option" id="Option1">
-                            <div class="">
-                              <form class="row g-3" action="{{ route ('generatetestkeyoauth') }}" method="POST" id="form-tryout-oauth"> 
-                                @csrf
-                                <input type="hidden" name="cosumersecret" value="">
-                                <div class="col-12 col-md-12 col-lg-8">
-                                  <label class="visually-hidden" for="inlineFormInputGroupUsername"></label>
-                                  <div class="input-group">
-                                    <span class="input-group-text" type="button" id="toggleAccesstoken"><i class="bi bi-eye-fill"></i></span>
-                                    <input type="password" class="form-control oauthbearer" id="accesstoken" placeholder="Authorization: Bearer">
-                                  </div>
-                                </div>
-                                                            
-                                <div class="col-12 col-md-12 col-lg-4 d-grid gap-2">
-                                  <button type="submit" class="btn btn-primary"><i class="bi bi-key-fill"></i> GENERATE TEST KEY</button>
-                                </div>
-                                <div class="col-12 col-md-6 mb-2">
-                                  <div class="form-floating">
-                                    <select class="form-select" id="floatingSelectGrid" name="gateway">
-                                      <option selected>-- Select --</option>
-                                      <option value="default">Default</option>
-                                    </select>
-                                    <label for="floatingSelectGrid">API Gateways</label>
-                                  </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                  <div class="form-floating">
-                                    <select class="form-select" id="floatingSelectKeytype" name="keytype">
-                                      <option selected>-- Select --</option>
-                                      <option value="PRODUCTION">Production</option>
-                                      <option value="SANDBOX">SandBox</option>
-                                    </select>
-                                    <label for="floatingSelectKeytype">Key Type</label>
-                                  </div>
-                                </div>
-                                <div class="col-12">
-                                  <div class="form-floating">
-                                    <select class="form-select" id="floatingSelectApi">
-                                      <option selected>-- Select --</option>
-                                      @foreach ($subs->list as $items)
-                                      <option value="{{ $items->apiInfo->name }}" data-toggle="tooltip" data-placement="top"
-                                        title="{{ $items->apiInfo->description}} ">
-                                        {{ $items->apiInfo->name }}
-                                      </option>
-                                      @endforeach
-                                    </select>
-                                    <label for="floatingSelectApi">API</label>
-                                  </div>
-                                </div>
-                              </form>
-                            </div>
-                          </div>
-                          <div for="Apikey" class="option" id="Option2" style="display: none;">
-                            <div class="">
-                              <form class="row g-3" action="{{ route ('generatetestkeyapikey') }}" method="POST" id="form-tryout-apikey">
-                                @csrf
-                                <input type="hidden" name="appid" value="{{ $app->applicationId }}">
-                                <div class="col-12 col-md-12 col-lg-8">
-                                  <label class="visually-hidden" for="inlineFormInputGroupUsername"></label>
-                                  <div class="input-group">
-                                    <span class="input-group-text" type="button" id="toggleAccesstoken"><i class="bi bi-eye-fill"></i></span>
-                                    <input type="password" class="form-control inputapikey" id="accesstoken" placeholder="API Key" placeholder="apikey">
-                                  </div>
-                                </div>
-                                <div class="col-12 col-md-12 col-lg-4 d-grid gap-2">
-                                  <button type="submit" class="btn btn-primary btn-generate-test-key-apikey"><i class="bi bi-key-fill"></i> GENERATE TEST KEY</button>
-                                </div>
-                                <div class="col-12 col-md-6 mb-2">
-                                  <div class="form-floating">
-                                    <select class="form-select" id="floatingSelectGateways" name="gateway">
-                                      <option selected>-- Select --</option>
-                                      <option value="default">Default</option>
-                                    </select>
-                                    <label for="floatingSelectGrid">API Gateways</label>
-                                  </div>
-                                </div>
-                                <div class="col-12 col-md-6">
-                                  <div class="form-floating">
-                                    <select class="form-select" id="floatingSelectKeytype" name="keytype">
-                                      <option selected>-- Select --</option>
-                                      <option value="PRODUCTION">Production</option>
-                                      <option value="SANDBOX">SandBox</option>
-                                    </select>
-                                    <label for="floatingSelectKeytype">Key Type</label>
-                                  </div>
-                                </div>
-                                <div class="col-12">
-                                  <div class="form-floating">
-                                    <select class="form-select" id="floatingSelectApi" name="apitryout">
-                                      <option selected>-- Select --</option>
-                                      @foreach ($subs->list as $items)
-                                      <option value="{{ $items->apiInfo->name }}" data-toggle="tooltip" data-placement="top"
-                                        title="{{ $items->apiInfo->description}} ">
-                                        {{ $items->apiInfo->name }}
-                                      </option>
-                                      @endforeach
-                                    </select>
-                                    <label for="floatingSelectApi">API</label>
-                                  </div>
-                                </div>
-                              </div>
-                              </form>
-                          </div>
-                          <div for="Basic" class="option" id="Option3" style="display: none;">
-                            <div class="row g-3">
-                              <div class="col-12 col-md-6">
-                                <label for="username" class="fw-bold mb-2">Username</label>
-                                <input type="text" class="form-control form-control-lg basicusername" id="username" name="username" placeholder="Username" aria-label="Username">
-                              </div>
-                              <div class="col-12 col-md-6">
-                                <label for="password" class="fw-bold mb-2">Password</label>
-                                <input type="password" class="form-control form-control-lg basicpassword" id="password" name="password" placeholder="Password" aria-label="Password">
-                              </div>
-                              <div class="col-12">
-                                <div class="form-floating">
-                                  <select class="form-select" id="floatingSelectGrid">
-                                    <option selected>-- Select --</option>
-                                    <option value="default">Default</option>
-                                  </select>
-                                  <label for="floatingSelectGrid">API Gateways</label>
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-12">
-                  <div id="swagger-ui"></div>
+                <div class="col-12 row p-3">
+                  <p class="fw-bold fs-6">{{ $app->name }}</p>
+                  <div class="col-6 fs-6">
+                   Business plan <br>
+                   {{ $app->throttlingPolicy }}
+                  </div>
+                  <div class="col-6 fs-6">
+                    Subscription API <br>
+                    {{ $app->subscriptionCount }}
+                  </div>
+                  <p class="fw-bold fs-6 mt-2">Description:</p>
+                  <p class="fw-light fs-6 text-break">{{ $app->description }}</p>
                 </div>
             </div>
+          </div>
         </div>
+        <div class="col-12 col-md-8">
+          <ul class="nav nav-pills justify-content-center fw-bold mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="pills-oauth-tab" data-bs-toggle="pill" data-bs-target="#pills-oauth" type="button" role="tab" aria-controls="pills-oauth" aria-selected="true">OAuth</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="pills-apikey-tab" data-bs-toggle="pill" data-bs-target="#pills-apikey" type="button" role="tab" aria-controls="pills-apikey" aria-selected="false">API key</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="pills-basic-tab" data-bs-toggle="pill" data-bs-target="#pills-basic" type="button" role="tab" aria-controls="pills-basic" aria-selected="false">Basic</button>
+            </li>
+          </ul>
+          <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="pills-oauth" role="tabpanel" aria-labelledby="pills-oauth-tab" tabindex="0">
+              @include('myapplication.tryout.oauth')
+            </div>
+            <div class="tab-pane fade" id="pills-apikey" role="tabpanel" aria-labelledby="pills-apikey-tab" tabindex="0">
+              @include('myapplication.tryout.apikey')
+            </div>
+            <div class="tab-pane fade" id="pills-basic" role="tabpanel" aria-labelledby="pills-basic-tab" tabindex="0">
+              @include('myapplication.tryout.basic')
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="swagger">
+      <hr>
+      <h1>Swagger 3.0</h1>
+      {{-- <div id="swagger-ui"></div> --}}
+    </div>
+  </div>
 </section>
-@push('script')
-<script>
 
-    $('#toggleAccesstoken').on('click', function(e){
+
+@push('script')
+    <script>
+
+        $(document).on('click','.toggleAccesstoken', function(e){
             e.preventDefault();
-            var passInput=$("#accesstoken");
+            var passInput=$(".generatetestkey");
             if(passInput.attr('type')==='password')
             {
                 passInput.attr('type','text');
@@ -203,52 +97,8 @@
             }
         });
 
-    $('.form-check-input').on('click', function(){
-        if ($(this).val() == 'option1') {
-            $('#apikey').hide();
-            $('#basic').hide();
-        }
-        if ($(this).val() == 'option2') {
-            $('#apikey').show(700);
-            $('#basic').hide();
-        }
-        if ($(this).val() == 'option3') {
-            $('#ipaddress').hide();
-            $('#basic').show(700);
-        }
-    });
-
-  $(document).ready(function() {
-    $("input[name$='RadioTryOut']").click(function() {
-        var valueoption = $(this).val();
-
-        $("div.option").hide();
-        $("#Option" + valueoption).show(700);
-    });
-  });
-  
-  $(document).on('submit','#form-form-tryout-apikey', function(e){
-            e.preventDefault();
-            $.ajax({
-                url: $(this).attr('action'),
-                method: $(this).attr('method'),
-                data: new FormData(this),
-                processData: false,
-                dataType: 'json',
-                contentType: false,
-                beforeSend: function() {
-                    $('.btn-generate-test-key').html(`<i class='bx bx-loader-circle bx-spin bx-rotate-270' style='color:#0b62e3' ></i>`).attr('disabled', true);
-                },
-                success: function(data) {
-                    $('#accesstoken').val(data.data.apikey);
-                },
-                complete: function(){
-                  location.reload();
-                },
-
-            });
-        });
-</script>
+    </script>
 @endpush
+
 
 @endsection

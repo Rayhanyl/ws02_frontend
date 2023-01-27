@@ -6,25 +6,21 @@
 }
 
 /* Small devices (portrait tablets and large phones, 600px and up) */
-@media only screen and (min-width: 600px) {
-}
+@media only screen and (min-width: 600px) {}
 
 /* Medium devices (landscape tablets, 768px and up) */
-@media only screen and (min-width: 768px) {
-}
+@media only screen and (min-width: 768px) {}
 
 /* Large devices (laptops/desktops, 992px and up) */
-@media only screen and (min-width: 992px) {
-}
+@media only screen and (min-width: 992px) {}
 
 /* Extra large devices (large laptops and desktops, 1200px and up) */
-@media only screen and (min-width: 1200px) {
-}
+@media only screen and (min-width: 1200px) {}
 
 .dropdown-toggle.hide-arrow::before,
 .dropdown-toggle.hide-arrow::after,
-.dropdown-toggle-hide-arrow > .dropdown-toggle::before,
-.dropdown-toggle-hide-arrow > .dropdown-toggle::after {
+.dropdown-toggle-hide-arrow>.dropdown-toggle::before,
+.dropdown-toggle-hide-arrow>.dropdown-toggle::after {
     display: none;
 }
 
@@ -44,4 +40,13 @@
 .bd-callout-warning {
     --bd-callout-bg: rgba(var(--bs-warning-rgb), .075);
     --bd-callout-border: rgba(var(--bs-warning-rgb), .5);
+}
+
+.glass {
+/* From https://css.glass */
+background: rgba(183, 227, 255, 0);
+border-radius: 16px;
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
 }

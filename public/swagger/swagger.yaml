@@ -1,29 +1,67 @@
-swagger: "2.0"
-paths:
-  /swaggerlogin:
-    post:
-      tags:
-        - Login
-      summary: Login
-      description: "Login with this API"
-      operationId: login
-      consumes:
-        - application/json
-      produces:
-        - application/json
-      parameters:
-        - in: query
-          name: username
-          type: string
-          required: true
-        - in: query
-          name: password
-          type: string
-          required: true
-      responses:
-        "200":
-          description: successful operation
-        "400":
-          description: Bad request
-      security:
-        - api_key: []
+openapi: 3.0.1
+info: 
+    title: Jsonplaceholder
+    version: 1.0
+servers: 
+    url: https://194.233.88.81:8243/jsonplaceholder/1.0
+    url: http://194.233.88.81:8280/jsonplaceholder/1.0
+security: 
+    default: 
+paths: 
+    /posts: 
+        get: 
+            parameters: 
+            responses: 
+                200: 
+                    description: ok
+            security: 
+                default: 
+            x-auth-type: Application & Application User
+            x-throttling-tier: 1permenit
+        post: 
+            parameters: 
+            requestBody: 
+                description: 
+                content: 
+                    application/json: 
+                        schema: 
+                            type: object
+                required: false
+            responses: 
+                200: 
+                    description: ok
+            security: 
+                default: 
+            x-auth-type: Application & Application User
+            x-throttling-tier: Unlimited
+    /posts/id: 
+        get: 
+            parameters: 
+                name: id
+                in: path
+                required: true
+                style: simple
+                explode: false
+                schema: 
+                    type: string
+                    format: string
+            responses: 
+                200: 
+                    description: ok
+            security: 
+                default: 
+            x-auth-type: Application & Application User
+            x-throttling-tier: limapermin
+components: 
+    securitySchemes: 
+        default: 
+            type: oauth2
+            flows: 
+                implicit: 
+                    authorizationUrl: https://194.233.88.81:8243/authorize
+                    scopes: 
+                
+            
+        
+    
+

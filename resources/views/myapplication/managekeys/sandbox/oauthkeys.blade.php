@@ -222,12 +222,12 @@
         </div>
         <div class="modal-body">
             <p>The following cURL command shows how to generate an access token using the Password Grant type.</p>
-            <div>
+            <div id="oauth-basic">
                 curl -k -X POST {{ $url }}/oauth2/token -d "grant_type=password&username=Username&password=Password"
                 -H "Authorization: Basic <a id="userpasscurl" href="#">Base64(consumer-key:consumer-secret)</a>"
             </div>
             <p>In a similar manner, you can generate an access token using the Client Credentials grant type with the following cURL command.</p>
-            <div>
+            <div id="oauth-credentials">
                 curl -k -X POST {{ $url }}/oauth2/token -d "grant_type=client_credentials"
                 -H "Authorization: Basic <a id="credentialcurl" href="#">Base64(consumer-key:consumer-secret)</a>"
             </div>
@@ -240,7 +240,7 @@
 </div>
 
 <div class="modal fade" id="generateaccess" tabindex="-1" aria-labelledby="generateaccessLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
         <div class="modal-header">
           <h1 class="modal-title fs-5" id="generateaccessLabel">Generate Access Token</h1>
@@ -264,9 +264,11 @@
                     If the token type is JWT or API Key, please copy this generated token value as it will be displayed only for the current browser session. ( The token will not be visible in the UI after the page is refreshed. )
                 </p>
                 <label for="text-accesstoken"></label>
-                <textarea name="token" id="text-accesstoken" cols="30" rows="10" disabled>
+                <textarea name="token" id="text-accesstoken" cols="90" rows="10" disabled>
                 </textarea>
-                <button class="btn btn-success" onclick="myFunction()">Copy To clipboard</button>
+                <div class="my-2">
+                    <button class="btn btn-success" onclick="myAccesstoken()">Copy To clipboard</button>
+                </div>
             </div>
         </div>
         <div class="modal-footer">
@@ -315,17 +317,13 @@
             });
         });
 
-        function myFunction() {
-            // Get the text field
+        function myAccesstoken() {
             var copyText = document.getElementById("text-accesstoken");
 
-            // Select the text field
             copyText.select();
             copyText.setSelectionRange(0, 99999); // For mobile devices
 
-            // Copy the text inside the text field
             navigator.clipboard.writeText(copyText.value);
-            // if(copyText.value.length > 10) copyText.value = copyText.value.substring(0,20);
 
             Swal.fire(
             'Already Copied',
@@ -333,11 +331,11 @@
             'success'
             )
         }
-
+        
         $('#credentialcurl').on('click', function(e){
             e.preventDefault();
             if($(this).html() == 'Base64(consumer-key:consumer-secret)'){
-                $(this).html('{{ $base64 }}'); 
+                $(this).html('{{ $base64 }}');
             }else{
                 $(this).html('Base64(consumer-key:consumer-secret)');
             }

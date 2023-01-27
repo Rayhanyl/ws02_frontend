@@ -78,7 +78,37 @@
 
   <!-- Vendor JS Files -->
   <script src="{{asset ('assets/landingpage/js/jquery-3.6.1.js')}}"></script>
+  <script>
+  
+    $(document).ready(function() {
+      $(document).on('click', '.toggleChangepassword', function (e) {
+        e.preventDefault();
+          var currentPass = $("#currentpassword");
+          var newPass = $("#newpassword");
 
+          if (currentPass.attr('type') === 'password') {
+              currentPass.attr('type', 'text');
+              $(this).html('<i class="bi bi-eye-slash-fill"></i>');
+  
+          } else {
+              currentPass.attr('type', 'password');
+              $(this).html('<i class="bi bi-eye-fill"></i>');
+          }
+      });
+      $(document).on('click', '.toggleNewpassword', function (e) {
+        e.preventDefault();
+          var newPass = $("#newpassword");
+          if (newPass.attr('type') === 'password') {
+              newPass.attr('type', 'text');
+              $(this).html('<i class="bi bi-eye-slash-fill"></i>');
+  
+          } else {
+              newPass.attr('type', 'password');
+              $(this).html('<i class="bi bi-eye-fill"></i>');
+          }
+      });
+    });
+  </script>
   @include('sweetalert::alert')
   <script src="{{asset('swagger/jquery-2.1.4.min.js')}}"></script>
   <script src="{{asset('swagger/swagger-bundle.js')}}"></script>

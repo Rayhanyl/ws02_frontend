@@ -56,6 +56,9 @@
                                 <button class="btn btn-outline-primary fw-bold generate" type="submit" form="generatekey">
                                     <i class="bi bi-recycle"></i>
                                     UPDATE</button>
+                                <button class="btn btn-outline-primary fw-bold generate" type="submit"
+                                    data-bs-toggle="modal" data-bs-target="#generateaccess" form="generateaccess">
+                                        Generate Access Token</button>
                                 <button class="btn btn-outline-primary fw-bold generate" type="submit" 
                                 data-bs-toggle="modal" data-bs-target="#generatecurl" form="generatecurl">
                                     CURL to Generate Access Token</button>
@@ -236,6 +239,48 @@
     </div>
 </div>
 
+<div class="modal fade" id="generateaccess" tabindex="-1" aria-labelledby="generateaccessLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="generateaccessLabel">Generate Access Token</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="{{ route('accesstoken') }}" method="POST" id="form-accesstoken-production">
+                @csrf
+                <input type="hidden" name="consumersecretkey" value="{{ $data->consumerSecret ?? '' }}">
+                <input type="hidden" name="id" value="{{ $app->applicationId }}">
+                <input type="hidden" name="idmapping" value="{{ $data->keyMappingId ?? '' }}">
+            </form>
+            <div class="before-accesstoken">
+                <p class="fw-bold">Scopes</p>
+                <hr>
+                <p class="text-break">When you generate access tokens to APIs protected by scope/s, you can select the scope/s and then generate the token for it. Scopes enable fine-grained access control to API resources based on user roles. You define scopes to an API resource. When a user invokes the API, his/her OAuth 2 bearer token cannot grant access to any API resource beyond its associated scopes.</p>
+            </div>
+            <div class="result-accesstoken">
+                <h4>Please Copy the Access Token</h4>
+                <p>
+                    If the token type is JWT or API Key, please copy this generated token value as it will be displayed only for the current browser session. ( The token will not be visible in the UI after the page is refreshed. )
+                </p>
+                <label for="text-accesstoken"></label>
+                <textarea name="token" id="text-accesstoken" cols="90" rows="10" disabled>
+                </textarea>
+                <div class="my-2">
+                    <button class="btn btn-success" onclick="myAccesstokenProduction()">Copy To clipboard</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" class="btn btn-primary btn-accesstoken" form="form-accesstoken-production">
+                <i class='bx bx-cog bx-rotate-180'></i> 
+                Generate
+            </button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+</div>
 @push('script')
     <script>
         $('#userpasscurl').on('click', function(e){
@@ -254,6 +299,54 @@
                 $(this).html('Base64(consumer-key:consumer-secret)');
             }
         });
+        
+        $(document).ready(function() {
+            $('.result-accesstoken').hide();
+        });
+        
+        const myModalEl = document.getElementById('generateaccess')
+        myModalEl.addEventListener('hidden.bs.modal', event => {
+            $('.btn-accesstoken').show();
+            $('.before-accesstoken').show();
+            $('.result-accesstoken').hide();
+        });
+
+        $(document).on('submit','#form-accesstoken-production', function(e){
+            e.preventDefault();
+            $.ajax({
+                url: $(this).attr('action'),
+                method: $(this).attr('method'),
+                data: new FormData(this),
+                processData: false,
+                dataType: 'json',
+                contentType: false,
+                beforeSend: function() {
+                    $('.btn-accesstoken').html(`<i class='bx bx-cog bx-spin'></i> Loading`).attr('disabled', true);
+                },
+                success: function(data) {
+                    $('.before-accesstoken').hide();
+                    $('.result-accesstoken').show();
+                    $('#text-accesstoken').val(data.data.accessToken);
+                    $('.btn-accesstoken').hide();
+                    $('.btn-accesstoken').html(`<i class='bx bx-cog bx-rotate-180'></i> Generate`).attr('disabled', false);
+                }
+            });
+        });
+
+        function myAccesstokenProduction() {
+            var copyText = document.getElementById("text-accesstoken");
+
+            copyText.select();
+            copyText.setSelectionRange(0, 99999); // For mobile devices
+
+            navigator.clipboard.writeText(copyText.value);
+
+            Swal.fire(
+            'Already Copied',
+            '',
+            'success'
+            )
+        }
     </script>
 @endpush
 

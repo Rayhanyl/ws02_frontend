@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{AuthController,AppController,ManageKeysController,SubscriptionController,TryOutController,DocumentController};
+use App\Http\Controllers\{AuthController,AppController,ManageKeysController,SubscriptionController,TryOutController,DocumentController,SendMailController};
 
 /*
 |--------------------------------------------------------------------------
@@ -18,13 +18,17 @@ Route::get('/', [AppController::class, 'index'])->name('index');
 
 Route::get('/loginpage', [AuthController::class, 'loginpage'])->name('loginpage');
 Route::post('/authentication', [AuthController::class, 'authentication'])->name('authentication');
-Route::post('/swaggerlogin', [AuthController::class, 'swaggerlogin'])->name('swaggerlogin');
 
 Route::get('/registerpage', [AuthController::class, 'registerpage'])->name('registerpage');
 Route::post('/register', [AuthController::class, 'register'])->name('register');
 
 Route::get('/forgotpassword', [AuthController::class, 'forgetpage'])->name('forgetpage');
+Route::get('/newpassword', [AuthController::class, 'vnewpassword'])->name('newpassword');
+Route::post('/resetpassword',[AuthController::class, 'updatenewpassword'])->name('resetpassword');
+// Route::post('/forgotpassword', [AuthController::class, 'forgotpassword'])->name('forgotpassword');
 
+//Email
+Route::post('/send-email',[SendMailController::class, 'sendmail'])->name('sendmail');
 
 Route::middleware(['haslogin'])->group(function () {
 
@@ -67,7 +71,6 @@ Route::middleware(['haslogin'])->group(function () {
     Route::post('/generatetestkeyoauth' ,[TryOutController::class, 'generatetestkeyoauth'])->name('generatetestkeyoauth');
     Route::post('/generatetestkeyapikey' ,[TryOutController::class, 'generatetestkeyapikey'])->name('generatetestkeyapikey');
 
-    
     // Documentation
     Route::get('/documentation',[DocumentController::class, 'vdocumentation'])->name('vdocumentation');
     
